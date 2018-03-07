@@ -18,13 +18,15 @@ import org.springframework.stereotype.Controller;
 
 import com.code73.function.dto.Person;
 import com.code73.function.response.AppResponse;
-import com.code73.function.response.dto.CreatedResponse;
-import com.code73.function.response.dto.DeletedResponse;
+import com.code73.function.response.EchoResponse;
+import com.code73.function.response.PersonEchoResponse;
 import com.code73.function.security.Security;
 
 @Controller
 @Path("/people")
 public class PersonControllerImpl implements PersonController{
+	
+	private PersonEchoResponse personEchoResponse;
 	
 	private PersonService personService;
 	
@@ -33,7 +35,9 @@ public class PersonControllerImpl implements PersonController{
 	private Security security;
 	
 	@Autowired
-	public PersonControllerImpl(PersonService personService, AppResponse appResponse, Security security) {
+	public PersonControllerImpl(PersonEchoResponse personEchoResponse, PersonService personService,
+			AppResponse appResponse, Security security) {
+		this.personEchoResponse = personEchoResponse;
 		this.personService = personService;
 		this.appResponse = appResponse;
 		this.security = security;
@@ -46,17 +50,11 @@ public class PersonControllerImpl implements PersonController{
 	public Response createPerson(@HeaderParam("jwt") String jwt, Person person) {
 		if(security.verify(jwt)){
 			this.personService.createPerson(person);
-			CreatedResponse created = new CreatedResponse();
-			created.setLocation("http://localhost:8080/code73/api/people/"+person.getUsername());
-			created.setMessage("Person " + person.getUsername() + " was created");
-			created.setStatus(Response.Status.CREATED.getStatusCode());
-			
-			return appResponse.generatePostResponse(created, null);
+			EchoResponse echoResponse = personEchoResponse.created(person.getUsername());
+			return appResponse.generatePostResponse(echoResponse, null);
 		}
-		DeletedResponse deleted = new DeletedResponse();
-		deleted.setMessage("JWT " + jwt + " is invalid");
-		deleted.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-		return appResponse.generateUnAuthorizedResponse(deleted, null);
+		
+		return appResponse.generateUnAuthorizedResponse(jwt, null);
 	}
 
 	@GET
@@ -66,17 +64,12 @@ public class PersonControllerImpl implements PersonController{
 		if(security.verify(jwt)){
 			Person person = personService.findPerson(username);
 			if(person == null){
-				DeletedResponse deleted = new DeletedResponse();
-				deleted.setMessage("Person " + username + " is not found");
-				deleted.setStatus(Response.Status.NOT_FOUND.getStatusCode());
-				return appResponse.generateGetNotFoundResponse(deleted, type);
+				EchoResponse echoResponse = personEchoResponse.notFound(username);
+				return appResponse.generateGetNotFoundResponse(echoResponse, type);
 			}
 			return appResponse.generateGetResponse(person, type);
 		}
-		DeletedResponse deleted = new DeletedResponse();
-		deleted.setMessage("JWT " + jwt + " is invalid");
-		deleted.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-		return appResponse.generateUnAuthorizedResponse(deleted, null);
+		return appResponse.generateUnAuthorizedResponse(jwt, null);
 	}
 
 	@PUT
@@ -85,26 +78,18 @@ public class PersonControllerImpl implements PersonController{
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updatePerson(@HeaderParam("jwt") String jwt, @PathParam("username") String username, Person person) {
 		if(security.verify(jwt)){
-			CreatedResponse created = null;
+			EchoResponse echoResponse = null;
 			byte result = this.personService.updatePersonByUsername(username, person);
 			if(result == 0){
-				created = new CreatedResponse();
-				created.setLocation("http://localhost:8080/code73/api/people/"+username);
-				created.setMessage("Person " + person.getUsername() + " was created");
-				created.setStatus(Response.Status.CREATED.getStatusCode());
+				echoResponse = personEchoResponse.created(username);
 			}else{
-				created = new CreatedResponse();
-				created.setLocation("http://localhost:8080/code73/api/people/"+username);
-				created.setMessage("Person " + person.getUsername() + " was update");
-				created.setStatus(Response.Status.CREATED.getStatusCode());
+				echoResponse = personEchoResponse.updated(username);
 			}
 			
-			return appResponse.generatePutResponse(created, null);
+			return appResponse.generatePutResponse(echoResponse, null);
 		}
-		DeletedResponse deleted = new DeletedResponse();
-		deleted.setMessage("JWT " + jwt + " is invalid");
-		deleted.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-		return appResponse.generateUnAuthorizedResponse(deleted, null);
+		
+		return appResponse.generateUnAuthorizedResponse(jwt, null);
 	}
 
 	@DELETE
@@ -114,21 +99,14 @@ public class PersonControllerImpl implements PersonController{
 		if(security.verify(jwt)){
 			byte result = personService.deletePerson(username);
 			if(result == 0){
-				DeletedResponse deleted = new DeletedResponse();
-				deleted.setMessage("Person " + username + " is not found");
-				deleted.setStatus(Response.Status.NOT_FOUND.getStatusCode());
-				return appResponse.generateGetNotFoundResponse(deleted, null);
+				EchoResponse echoResponse = personEchoResponse.notFound(username);
+				return appResponse.generateGetNotFoundResponse(echoResponse, null);
 			}
 			
-			DeletedResponse deleted = new DeletedResponse();
-			deleted.setMessage("Person " + username + " was deleted");
-			deleted.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-			return appResponse.generateDeleteResponse(deleted, null);
+			EchoResponse echoResponse = personEchoResponse.deleted(username);
+			return appResponse.generateDeleteResponse(echoResponse, null);
 		}
-		DeletedResponse deleted = new DeletedResponse();
-		deleted.setMessage("JWT " + jwt + " is invalid");
-		deleted.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-		return appResponse.generateUnAuthorizedResponse(deleted, null);
+		return appResponse.generateUnAuthorizedResponse(jwt, null);
 		
 	}
 

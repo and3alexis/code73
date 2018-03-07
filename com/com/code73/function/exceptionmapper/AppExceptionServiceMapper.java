@@ -5,21 +5,30 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import com.code73.function.response.dto.ErrorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.code73.function.messages.Messages;
+import com.code73.function.person.KeyMessage;
+import com.code73.function.response.EchoResponse;
 
 @Provider
+@Component
 public class AppExceptionServiceMapper implements ExceptionMapper<Exception>{
+	
+	@Autowired
+	private Messages messages;
 
 	@Override
 	public Response toResponse(Exception exception) {
-		com.code73.function.response.dto.ErrorResponse error = new ErrorResponse();
-		error.setException(exception.getClass().getName());
-		error.setMessage(exception.getMessage() == null ? "Error desconocido":exception.getMessage());
-		error.setStatus(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		String message = this.messages.getString(KeyMessage.GENERAL_ATTIBUTE_MESSAGE_VALUE_1);
+		EchoResponse echoResponse = new EchoResponse();
+		echoResponse.setMessage(exception.getClass().getName()+" "+(exception.getMessage() == null ? message:exception.getMessage()));
+		echoResponse.setStatus(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		
 		Response response = Response
 				.status(Response.Status.INTERNAL_SERVER_ERROR)
-				.entity(error)
+				.entity(echoResponse)
 				.type(MediaType.APPLICATION_JSON)
 				.build();
 		return response;

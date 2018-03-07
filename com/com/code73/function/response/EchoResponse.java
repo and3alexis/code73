@@ -1,11 +1,10 @@
-package com.code73.function.response.dto;
+package com.code73.function.response;
 
-public class CreatedResponse {
+public class EchoResponse {
 	
 	private int status;
 	private String location;
 	private String message;
-	
 	/**
 	 * @return the status
 	 */
