@@ -3,8 +3,9 @@ package com.code73.function.response;
 public class EchoResponse {
 	
 	private int status;
-	private String location;
 	private String message;
+	private Object content;
+	
 	/**
 	 * @return the status
 	 */
@@ -18,18 +19,6 @@ public class EchoResponse {
 		this.status = status;
 	}
 	/**
-	 * @return the location
-	 */
-	public String getLocation() {
-		return location;
-	}
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
-	/**
 	 * @return the message
 	 */
 	public String getMessage() {
@@ -40,6 +29,18 @@ public class EchoResponse {
 	 */
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	/**
+	 * @return the content
+	 */
+	public Object getContent() {
+		return content;
+	}
+	/**
+	 * @param content the content to set
+	 */
+	public void setContent(Object content) {
+		this.content = content;
 	}
 
 }

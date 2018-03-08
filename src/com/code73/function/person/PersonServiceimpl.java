@@ -8,9 +8,13 @@ import com.code73.function.dto.Person;
 @Service
 public class PersonServiceimpl implements PersonService{
 	
-	@Autowired
 	private PersonDAO personDAO;
 	
+	@Autowired
+	public PersonServiceimpl(PersonDAO personDAO) {
+		this.personDAO = personDAO;
+	}
+
 	public void createPerson(Person person){
 		personDAO.createPerson(person);
 	}

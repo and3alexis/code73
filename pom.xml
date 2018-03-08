@@ -65,6 +65,11 @@
 			<version>1.18.1</version>
 		</dependency>
 		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server-linking</artifactId>
+			<version>1.18.1</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
@@ -115,12 +120,11 @@
 			<classifier>jdk16</classifier>
 			<version>5.6</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.11</version>
 		</dependency>
-
+		
 	</dependencies>
 </project>

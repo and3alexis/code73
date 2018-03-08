@@ -5,8 +5,8 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.code73.function.messages.KeyMessage;
 import com.code73.function.messages.Messages;
-import com.code73.function.person.KeyMessage;
 
 @Component
 public class JWTEchoResponseImpl implements JWTEchoResponse{

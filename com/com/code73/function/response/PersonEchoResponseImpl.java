@@ -1,55 +1,89 @@
 package com.code73.function.response;
 
+import java.net.URI;
+
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.code73.function.dto.Person;
+import com.code73.function.messages.KeyMessage;
 import com.code73.function.messages.Messages;
-import com.code73.function.person.KeyMessage;
 
 @Component
 public class PersonEchoResponseImpl implements PersonEchoResponse {
+	
+	@Autowired
+	private AppResponse appResponse;
 
 	@Autowired
 	private Messages messages;
 
-	public EchoResponse created(String username) {
-		String messageLocation = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_LOCATION, new Object[]{username});
+	public Response created(UriInfo uriInfo, String username) {
+		final URI baseUri = uriInfo.getBaseUri();
+		final String restResource = this.messages.getString(KeyMessage.PERSON_RESOURCE_PATH_VALUE, new Object[]{username});
 		String message = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_MESSAGE_VALUE_1, new Object[]{username});
-		
 		EchoResponse echoResponse = new EchoResponse();
-		echoResponse.setLocation(messageLocation);
 		echoResponse.setMessage(message);
 		echoResponse.setStatus(Response.Status.CREATED.getStatusCode());
-		return echoResponse;
+		echoResponse.setContent(baseUri+restResource);
+		
+		Response response = appResponse.generatePostResponse(echoResponse, null);
+		return response;
 	}
-
-	public EchoResponse notFound(String username) {
+	
+	public Response notFound(String username) {
 		String message = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_MESSAGE_VALUE_2, new Object[]{username});
 		EchoResponse echoResponse = new EchoResponse();
 		echoResponse.setMessage(message);
 		echoResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
-		return echoResponse;
+		
+		Response response = appResponse.generateGetNotFoundResponse(echoResponse, null);
+		return response;
 	}
 
-	public EchoResponse updated(String username) {
-		String messageLocation = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_LOCATION, new Object[]{username});
+	public Response updated(UriInfo uriInfo, String username) {
+		final URI baseUri = uriInfo.getBaseUri();
+		final String restResource = this.messages.getString(KeyMessage.PERSON_RESOURCE_PATH_VALUE, new Object[]{username});
 		String message = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_MESSAGE_VALUE_3, new Object[]{username});
-		
 		EchoResponse echoResponse = new EchoResponse();
-		echoResponse.setLocation(messageLocation);
 		echoResponse.setMessage(message);
 		echoResponse.setStatus(Response.Status.CREATED.getStatusCode());
-		return echoResponse;
+		echoResponse.setContent(baseUri+restResource);
+		
+		Response response = appResponse.generatePutResponse(echoResponse, null);
+		return response;
 	}
 
-	public EchoResponse deleted(String username) {
+	public Response deleted(String username) {
 		String message = this.messages.getString(KeyMessage.PERSON_ATTIBUTE_MESSAGE_VALUE_4, new Object[]{username});
 		EchoResponse echoResponse = new EchoResponse();
 		echoResponse.setMessage(message);
 		echoResponse.setStatus(Response.Status.NO_CONTENT.getStatusCode());
-		return echoResponse;
+		
+		Response response = appResponse.generateDeleteResponse(echoResponse, null);
+		return response;
+	}
+
+	@Override
+	public Response found(Person person, String type) {
+		String message = this.messages.getString(KeyMessage.GENERAL_ATTIBUTE_MESSAGE_VALUE_3);
+		EchoResponse echoResponse = new EchoResponse();
+		echoResponse.setMessage(message);
+		echoResponse.setContent(person);
+		echoResponse.setStatus(Response.Status.OK.getStatusCode());
+		
+		Response response = appResponse.generateGetResponse(echoResponse, type);
+		
+		return response;
+	}
+	
+	@Override
+	public Response generateUnAuthorizedResponse(String jwt){
+		Response response = appResponse.generateUnAuthorizedResponse(jwt, null);
+		return response;
 	}
 
 }

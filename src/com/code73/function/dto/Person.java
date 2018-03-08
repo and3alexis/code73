@@ -1,10 +1,16 @@
 package com.code73.function.dto;
 
+import java.net.URI;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.code73.function.response.Link;
+import com.sun.jersey.server.linking.Ref;
+import com.sun.jersey.server.linking.Ref.Style;
 
 @DynamoDBTable(tableName = "Person")
 @XmlRootElement(name = "person")
@@ -23,6 +29,23 @@ public class Person {
 	private Password password;
 	
 	private Role role;
+	
+	@Ref(value="people/${instance.username}", style=Style.ABSOLUTE)
+	@DynamoDBIgnore
+	private transient URI href;
+	
+	private transient Link link = new Link() {
+		
+		@Override
+		public URI getHref() {
+			return href;
+		}
+		
+		@Override
+		public String getRel() {
+			return "self";
+		}
+	};
 	
 	/**
 	 * @return the username
@@ -116,6 +139,14 @@ public class Person {
 		this.password = password;
 	}
 	
+	/**
+	 * @return the link
+	 */
+	@DynamoDBIgnore
+	public Link getLink() {
+		return link;
+	}
+	
 	public void updateFrom(Person that){
 		setEmail(that.getEmail());
 		setLastname(that.getLastname());
@@ -124,5 +155,7 @@ public class Person {
 		setRole(that.getRole());
 		setMobile(that.getMobile());
 	}
+	
+	
 
 }

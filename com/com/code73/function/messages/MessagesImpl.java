@@ -11,13 +11,12 @@ import com.code73.function.exceptionmapper.AppException;
 @Component
 public class MessagesImpl implements Messages{
 
-    private final String BUNDLE_NAME = "messages";
-    private final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    private final ResourceBundle RESOURCE_BUNDLE_MESSAGE = ResourceBundle.getBundle("messages");
     
     @Override
     public String getString(String key) {
         try {
-            return RESOURCE_BUNDLE.getString(key);
+            return RESOURCE_BUNDLE_MESSAGE.getString(key);
         } catch (MissingResourceException e) {
         	throw new AppException(e);
         }
@@ -26,7 +25,7 @@ public class MessagesImpl implements Messages{
     
     public String getString(String key, Object[] params) {
         try {
-            return MessageFormat.format(RESOURCE_BUNDLE.getString(key), params);
+            return MessageFormat.format(RESOURCE_BUNDLE_MESSAGE.getString(key), params);
         } catch (MissingResourceException e) {
             throw new AppException(e);
         }

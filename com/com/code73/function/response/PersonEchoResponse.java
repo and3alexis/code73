@@ -1,13 +1,22 @@
 package com.code73.function.response;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import com.code73.function.dto.Person;
+
 public interface PersonEchoResponse {
 	
-	public EchoResponse created(String username);
+	public Response created(UriInfo uriInfo, String username);
+	
+	public Response notFound(String username);
+	
+	public Response updated(UriInfo uriInfo, String username);
 
-	public EchoResponse notFound(String username);
+	public Response deleted(String username);
 
-	public EchoResponse updated(String username);
+	Response generateUnAuthorizedResponse(String jwt);
 
-	public EchoResponse deleted(String username);
+	Response found(Person person, String type);
 
 }
