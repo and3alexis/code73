@@ -15,8 +15,9 @@ public class PersonServiceimpl implements PersonService{
 		this.personDAO = personDAO;
 	}
 
-	public void createPerson(Person person){
+	public byte createPerson(Person person){
 		personDAO.createPerson(person);
+		return 1;
 	}
 
 	public Person findPerson(String username){

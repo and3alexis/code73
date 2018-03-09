@@ -4,7 +4,7 @@ import com.code73.function.dto.Person;
 
 public interface PersonService {
 	
-	public void createPerson(Person person);
+	public byte createPerson(Person person);
 
 	public Person findPerson(String username);
 
